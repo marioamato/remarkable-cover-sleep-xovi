@@ -1,0 +1,12 @@
+[Unit]
+Description=Update reMarkable sleep screen from current document cover
+After=xochitl.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/sh -c 'while true; do /home/root/.local/bin/cover-sleep-update; sleep 2; done'
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target
