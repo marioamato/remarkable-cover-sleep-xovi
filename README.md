@@ -87,7 +87,7 @@ The installer:
 
 ```sh
 cd /home/root
-tar xzf cover-sleep-xovi-v4.4.1.tar.gz
+tar xzf cover-sleep-xovi-v4.4.2.tar.gz
 cd cover-sleep-xovi
 ./install.sh
 ```
@@ -158,6 +158,7 @@ This removes the QMD, helper and service. `/home/root/.cover-sleep` is intention
 - QMD patches are tied to the xochitl/QML resource hashes of compatible firmware versions.
 - For EPUBs, “cover” means the first page rendered by reMarkable, which may differ from the cover image declared inside the EPUB. The helper does not extract the EPUB cover asset.
 - Page selection uses the first page ID in `.content`; reordered/deleted page records and unfamiliar metadata layouts require device validation.
+- If the first-page image is unavailable for an EPUB, the helper tries its non-empty `.thumbnails/cover.png`, observed on OS 3.28.0.172. This fallback still needs visual confirmation on the tablet.
 - A lone thumbnail for a different page is never used as a fallback.
 - The first page must have a usable image in the document's `.thumbnails` or `.cache` directory.
 - The helper currently polls every 2 seconds rather than subscribing to an xochitl event.

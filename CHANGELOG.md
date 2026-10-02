@@ -1,5 +1,12 @@
 # Changelog
 
+## v4.4.2 — 2026-10-02
+
+- Fall back to the EPUB-specific `.thumbnails/cover.png` when the first-page thumbnail is missing, based on device diagnostics from OS 3.28.0.172.
+- Preserve PDF selection and ignore empty cover files.
+- Remove the misleading “no document open” message when clearing a missing cover.
+- Add four regression tests; visual validation of the EPUB fallback is pending.
+
 ## v4.4.1 — 2026-10-02
 
 - Fix firmware detection: prefer IMG_VERSION from /etc/os-release; VERSION_ID may identify the Linux base (for example 5.8.203).

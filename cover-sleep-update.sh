@@ -1,5 +1,5 @@
 #!/usr/bin/sh
-# cover-sleep-update v4.4
+# cover-sleep-update v4.4.2
 # reMarkable OS 3.27.x / 3.28.x / Paper Pro experimental
 #
 # Source of truth: xochitl.conf -> LastOpen.
@@ -34,9 +34,9 @@ clear_dynamic_cover() {
     [ -f "$OUT" ] && had_cover=1
     rm -f "$OUT" "$TMP" "$STATE" "$METHOD_STATE"
     if [ "$had_cover" -eq 1 ]; then
-        log "no document open; dynamic cover removed, using default sleep screen"
+        log "dynamic cover removed, using default sleep screen"
     else
-        debug "no document open; using default sleep screen"
+        debug "using default sleep screen"
     fi
 }
 
@@ -188,8 +188,14 @@ pick_first_page_image() {
         debug "could not parse first page id from $DATA/$uuid.content"
     fi
 
+    # EPUBs can store the cover separately from page-ID thumbnails.
+    if [ -f "$DATA/$uuid.epub" ] && [ -s "$DATA/$uuid.thumbnails/cover.png" ]; then
+        printf '%s\n' "$DATA/$uuid.thumbnails/cover.png"
+        return 0
+    fi
+
     # A sole cached image may be the last page read, not the cover.
-    # Only accept a filename matching the first-page ID from metadata.
+    # Other cached pages are not valid fallbacks.
 
     return 1
 }
@@ -220,7 +226,7 @@ update_cover() {
 
     src="$(pick_first_page_image "$uuid" 2>/dev/null || true)"
     if [ -z "$src" ]; then
-        log "document $uuid (${name:-unknown}) detected via $method, but no first-page thumbnail/cache image found; using default sleep screen"
+        log "document $uuid (${name:-unknown}) detected via $method, but no first-page image or EPUB cover.png found; using default sleep screen"
         clear_dynamic_cover
         return 0
     fi

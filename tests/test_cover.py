@@ -81,6 +81,32 @@ class CoverTests(unittest.TestCase):
         self.run_helper()
         self.assertFalse(self.out.exists())
 
+    def test_epub_dedicated_cover_without_first_page_thumbnail(self):
+        self.document('epub')
+        self.thumb(SECOND, b'wrong-page')
+        self.thumb('cover', b'epub-cover', ext='png')
+        self.run_helper()
+        self.assertEqual(self.out.read_bytes(), b'epub-cover')
+
+    def test_pdf_does_not_use_named_cover(self):
+        self.document('pdf')
+        self.thumb('cover', b'not-a-confirmed-first-page', ext='png')
+        self.run_helper()
+        self.assertFalse(self.out.exists())
+
+    def test_first_page_precedes_named_cover(self):
+        self.document('epub')
+        self.thumb(FIRST, b'first-page')
+        self.thumb('cover', b'other-cover', ext='png')
+        self.run_helper()
+        self.assertEqual(self.out.read_bytes(), b'first-page')
+
+    def test_empty_epub_cover_is_ignored(self):
+        self.document('epub')
+        self.thumb('cover', b'', ext='png')
+        self.run_helper()
+        self.assertFalse(self.out.exists())
+
     def test_deleted_epub(self):
         self.document('epub')
         self.thumb(FIRST, b'cover')

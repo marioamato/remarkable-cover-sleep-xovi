@@ -41,6 +41,6 @@ else
     systemctl restart xochitl
 fi
 
-echo "Installed Cover Sleep Screen v4.4.1 and its update service on OS $OS_VERSION."
+echo "Installed Cover Sleep Screen v4.4.2 and its update service on OS $OS_VERSION."
 echo "Open a PDF (or return Home), wait ~2 seconds, then run:"
 echo "  /home/root/.local/bin/cover-sleep-update --debug"
