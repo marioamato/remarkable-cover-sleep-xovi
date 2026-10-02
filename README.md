@@ -30,7 +30,9 @@ and [3.28](https://github.com/ingatellent/xovi-qmd-extensions/blob/main/3.28/ran
 patches (checked 2026-10-02). No selector changes are needed for 3.28.
 This is a source-level compatibility check, not a successful test on a 3.28 device.
 The helper's LastOpen detection and cover rendering still need device validation.
-The installer accepts OS 3.27.x and 3.28.x and rejects other/unknown versions
+The installer reads `IMG_VERSION` from `/etc/os-release` (falling back to
+`VERSION_ID` only when empty). `VERSION_ID` can describe the Linux base instead
+of the reMarkable firmware. The installer accepts OS 3.27.x and 3.28.x and rejects other/unknown versions
 before making changes. Future firmware updates may change the QML layout.
 
 ## Requirements
@@ -85,7 +87,7 @@ The installer:
 
 ```sh
 cd /home/root
-tar xzf cover-sleep-xovi-v4.4.tar.gz
+tar xzf cover-sleep-xovi-v4.4.1.tar.gz
 cd cover-sleep-xovi
 ./install.sh
 ```

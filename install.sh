@@ -6,7 +6,11 @@ BIN_DIR="/home/root/.local/bin"
 SRC_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
 
 # Read data only: do not execute /etc/os-release as a shell script.
-OS_VERSION="$(sed -n 's/^VERSION_ID=//p' /etc/os-release | head -n 1 | tr -d '\042\047\015')"
+# IMG_VERSION is the reMarkable firmware; VERSION_ID can be the Linux base.
+OS_VERSION="$(sed -n 's/^IMG_VERSION=//p' /etc/os-release | head -n 1 | tr -d '\042\047\015')"
+if [ -z "$OS_VERSION" ]; then
+    OS_VERSION="$(sed -n 's/^VERSION_ID=//p' /etc/os-release | head -n 1 | tr -d '\042\047\015')"
+fi
 case "$OS_VERSION" in
     3.27|3.27.*|3.28|3.28.*) ;;
     *)
@@ -37,6 +41,6 @@ else
     systemctl restart xochitl
 fi
 
-echo "Installed Cover Sleep Screen v4.4 and its update service on OS $OS_VERSION."
+echo "Installed Cover Sleep Screen v4.4.1 and its update service on OS $OS_VERSION."
 echo "Open a PDF (or return Home), wait ~2 seconds, then run:"
 echo "  /home/root/.local/bin/cover-sleep-update --debug"

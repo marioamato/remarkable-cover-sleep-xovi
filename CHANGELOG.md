@@ -1,5 +1,11 @@
 # Changelog
 
+## v4.4.1 — 2026-10-02
+
+- Fix firmware detection: prefer IMG_VERSION from /etc/os-release; VERSION_ID may identify the Linux base (for example 5.8.203).
+- Keep VERSION_ID as a fallback only when IMG_VERSION is absent or empty.
+- Add regression tests for the reported version mismatch and unsupported firmware.
+
 ## v4.4 — 2026-10-02
 
 - Checked sleep-screen QMD selectors against upstream OS 3.28 patches; the selectors are unchanged from 3.27.
