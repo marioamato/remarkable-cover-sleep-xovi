@@ -1,5 +1,15 @@
 # Changelog
 
+## v4.4 — 2026-10-02
+
+- Checked sleep-screen QMD selectors against upstream OS 3.28 patches; the selectors are unchanged from 3.27.
+- Added an installer firmware check for 3.27.x / 3.28.x before any installation changes.
+- Documented reinstalling after an OS update and the on-device validation procedure.
+- Removed the unsafe single-image fallback: a cached non-cover page must not become the sleep screen.
+- Select only one page ID when metadata is compact JSON.
+- Added PDF/EPUB regression tests covering first-page selection, missing covers, deleted documents and Home.
+- OS 3.28 device testing remains pending.
+
 ## v4.3 — 2026-08-28
 
 First GitHub-ready working release.

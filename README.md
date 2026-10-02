@@ -11,7 +11,7 @@ When you return to **Home / My Files**, the dynamic cover is removed and reMarka
 - Uses the first page of the document currently open in xochitl.
 - Automatically changes the sleep cover when you open another document.
 - Falls back to the stock/reManager sleep image when no document is open.
-- Supports PDF and EPUB documents when a thumbnail/cache image is available.
+- Supports PDF and EPUB documents when a thumbnail/cache image for the first page is available.
 - Keeps the normal reMarkable sleep-screen behavior when no dynamic cover exists.
 - Includes a small systemd service that refreshes the current cover automatically.
 
@@ -20,10 +20,18 @@ When you return to **Home / My Files**, the dynamic cover is removed and reMarka
 | Device / software | Status |
 | --- | --- |
 | reMarkable Paper Pro, reMarkable OS 3.27.x | ✅ Tested working |
+| reMarkable OS 3.28.x | QMD selectors checked against upstream; not yet device-tested |
 | reMarkable Paper Pro Move | ⚠️ Not yet tested |
 | Other reMarkable OS versions | ⚠️ QMD hashes may need updating |
 
-The QMD is built for the 3.27.x resource layout. A firmware update can change QML resource hashes even when the shell-side logic still works.
+The sleep-screen selectors are shared by the upstream
+[3.27](https://github.com/ingatellent/xovi-qmd-extensions/blob/main/3.27/randomSleepScreen.qmd)
+and [3.28](https://github.com/ingatellent/xovi-qmd-extensions/blob/main/3.28/randomSleepScreen.qmd)
+patches (checked 2026-10-02). No selector changes are needed for 3.28.
+This is a source-level compatibility check, not a successful test on a 3.28 device.
+The helper's LastOpen detection and cover rendering still need device validation.
+The installer accepts OS 3.27.x and 3.28.x and rejects other/unknown versions
+before making changes. Future firmware updates may change the QML layout.
 
 ## Requirements
 
@@ -77,10 +85,24 @@ The installer:
 
 ```sh
 cd /home/root
-tar xzf cover-sleep-xovi-v4.3.tar.gz
+tar xzf cover-sleep-xovi-v4.4.tar.gz
 cd cover-sleep-xovi
 ./install.sh
 ```
+
+### Updating after installing OS 3.28
+
+Ensure XOVI and qt-resource-rebuilder work on the new firmware, then run
+`./install.sh` from this release to reinstall the QMD and service.
+Firmware updates may remove the service under `/etc/systemd/system`.
+Do not enable another sleep-screen QMD (such as randomSleepScreen or
+visibleSleepScreen) during validation: they can patch the same resources.
+
+Validate on the tablet: open a PDF, wait two seconds and sleep; repeat with
+another PDF and an EPUB. Return to Home, wait two seconds and sleep again;
+the normal/reManager screen should return. Also check after a reboot.
+If the patch fails to load, collect XOVI's patch error and the full firmware
+version from `/etc/os-release` before claiming compatibility.
 
 ## Test / debug
 
@@ -132,10 +154,17 @@ This removes the QMD, helper and service. `/home/root/.cover-sleep` is intention
 ## Known limitations
 
 - QMD patches are tied to the xochitl/QML resource hashes of compatible firmware versions.
+- For EPUBs, “cover” means the first page rendered by reMarkable, which may differ from the cover image declared inside the EPUB. The helper does not extract the EPUB cover asset.
+- Page selection uses the first page ID in `.content`; reordered/deleted page records and unfamiliar metadata layouts require device validation.
+- A lone thumbnail for a different page is never used as a fallback.
 - The first page must have a usable image in the document's `.thumbnails` or `.cache` directory.
 - The helper currently polls every 2 seconds rather than subscribing to an xochitl event.
 - The mod is not affiliated with or supported by reMarkable AS.
 - Test carefully after every reMarkable OS update.
+
+## Local regression checks
+
+Run `python3 -m unittest discover -s tests -v` on a computer. These tests run the shell helper against isolated PDF/EPUB metadata and cache fixtures, including missing covers and returning Home. They do not validate rendering on a tablet.
 
 ## Files
 

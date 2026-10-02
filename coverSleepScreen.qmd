@@ -1,4 +1,6 @@
-; Cover Sleep Screen v4.3 for reMarkable OS 3.27.x
+; Cover Sleep Screen v4.4 for reMarkable OS 3.27.x / 3.28.x
+; Sleep-screen selectors match upstream 3.28/randomSleepScreen.qmd.
+; Device validation on 3.28 is still required.
 ; Uses xochitl's native LastOpen state in xochitl.conf via the helper service.
 ; This QMD only changes the sleep-screen source:
 ;   /home/root/.cover-sleep/current.png if present

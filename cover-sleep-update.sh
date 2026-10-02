@@ -1,6 +1,6 @@
 #!/usr/bin/sh
-# cover-sleep-update v4.3
-# reMarkable OS 3.27.x / Paper Pro experimental
+# cover-sleep-update v4.4
+# reMarkable OS 3.27.x / 3.28.x / Paper Pro experimental
 #
 # Source of truth: xochitl.conf -> LastOpen.
 # Recent tooling confirms LastOpen contains the current document id and is
@@ -148,7 +148,7 @@ first_page_id() {
     page="$(
         sed -n '/"cPages"[[:space:]]*:/,$p' "$content" 2>/dev/null \
         | sed -n '/"pages"[[:space:]]*:/,/"uuids"[[:space:]]*:/p' \
-        | grep -m1 -oE "$UUID_RE" \
+        | grep -m1 -oE "$UUID_RE" | head -n1 \
         || true
     )"
     if [ -n "$page" ]; then
@@ -158,7 +158,7 @@ first_page_id() {
 
     page="$(
         sed -n '/"pages"[[:space:]]*:/,$p' "$content" 2>/dev/null \
-        | grep -m1 -oE "$UUID_RE" \
+        | grep -m1 -oE "$UUID_RE" | head -n1 \
         || true
     )"
     [ -n "$page" ] && { printf '%s\n' "$page"; return 0; }
@@ -188,14 +188,9 @@ pick_first_page_image() {
         debug "could not parse first page id from $DATA/$uuid.content"
     fi
 
-    for dir in "$DATA/$uuid.thumbnails" "$DATA/$uuid.cache"; do
-        [ -d "$dir" ] || continue
-        count="$(find "$dir" -maxdepth 1 -type f \( -name '*.png' -o -name '*.jpg' -o -name '*.jpeg' \) 2>/dev/null | wc -l | tr -d ' ')"
-        if [ "${count:-0}" = "1" ]; then
-            find "$dir" -maxdepth 1 -type f \( -name '*.png' -o -name '*.jpg' -o -name '*.jpeg' \) 2>/dev/null | head -n1
-            return 0
-        fi
-    done
+    # A sole cached image may be the last page read, not the cover.
+    # Only accept a filename matching the first-page ID from metadata.
+
     return 1
 }
 
